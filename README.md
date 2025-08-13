@@ -86,3 +86,7 @@ View  <->  ViewModel  <->  Repository  <->  Local / Remote Data Sources
 - Unit tests for ViewModels and Repository.
 - Swipe actions for quickly favoriting or adding to meal plan.
 - More advanced filtering (e.g., multiple tags AND search).
+
+## ScreenShoot
+<img src="https://github.com/elmeeee/RecipeApp/blob/main/RecipeApp/Data/Result.png" width="800" />
+
