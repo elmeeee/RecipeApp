@@ -6,27 +6,41 @@
 //
 
 import SwiftUI
-import SwiftData
+import NetworkingKit
+import AnalyticsKit
 
 @main
 struct RecipeAppApp: App {
-    var sharedModelContainer: ModelContainer = {
-        let schema = Schema([
-            Item.self,
-        ])
-        let modelConfiguration = ModelConfiguration(schema: schema, isStoredInMemoryOnly: false)
+    @StateObject private var favorites = FavoritesStore()
+    @StateObject private var mealPlan = MealPlanStore()
+    private let repo = CombinedRepository()
 
-        do {
-            return try ModelContainer(for: schema, configurations: [modelConfiguration])
-        } catch {
-            fatalError("Could not create ModelContainer: \(error)")
-        }
-    }()
+    init() {
+        URLCacheConfig.setup()
+        Logger.log(.appLaunch)
+    }
 
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            TabView {
+                HomeView(vm: HomeViewModel(repo: repo, favorites: favorites))
+                    .environmentObject(favorites)
+                    .environmentObject(mealPlan)
+                    .tabItem { Label("Browse", systemImage: "list.bullet") }
+
+                NavigationStack {
+                    FavoritesContainerView(repo: repo)
+                }
+                .environmentObject(favorites)
+                .tabItem { Label("Favorites", systemImage: "heart") }
+
+                NavigationStack {
+                    MealPlanContainerView(repo: repo)
+                }
+                .environmentObject(mealPlan)
+                .tabItem { Label("Plan", systemImage: "calendar") }
+            }
+            .withGlobalSnackbar()
         }
-        .modelContainer(sharedModelContainer)
     }
 }
