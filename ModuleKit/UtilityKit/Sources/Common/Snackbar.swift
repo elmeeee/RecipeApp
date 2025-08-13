@@ -12,9 +12,9 @@ public enum SnackbarStyle {
 
     var bg: Color {
         switch self {
-        case .success: return Color.green.opacity(0.92)
-        case .error:   return Color.red.opacity(0.92)
-        case .info:    return Color.black.opacity(0.92)
+        case .success: return Color.primaryGreen100.opacity(0.92)
+        case .error:   return Color.secondaryRed100.opacity(0.92)
+        case .info:    return Color.secondaryBlue100.opacity(0.92)
         }
     }
     var fg: Color { .white }
