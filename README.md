@@ -9,7 +9,7 @@ Built using **SwiftUI + MVVM** with a **Repository pattern**, async/await networ
 
 1. **Clone the repository**:
    ```bash
-   git clone <your-repo-url>.git
+   git clone https://github.com/elmeeee/RecipeApp
    cd RecipeBuddy
    ```
 
