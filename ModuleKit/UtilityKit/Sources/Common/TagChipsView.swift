@@ -25,7 +25,7 @@ public struct TagChipsView: View {
                 Text(tag.capitalized)
                     .padding(.horizontal, 12).padding(.vertical, 6)
                     .background(isOn ? Color.accentColor.opacity(0.2) : Color.gray.opacity(0.12))
-                    .foregroundStyle(isOn ? Color.blue : Color.yellow)
+                    .foregroundStyle(isOn ? Color.blue : Color.gray)
                     .clipShape(Capsule())
                     .onTapGesture {
                         if isOn { selected.remove(tag) } else { selected.insert(tag) }
