@@ -60,7 +60,6 @@ public final class SnackbarManager: ObservableObject {
         guard current == nil, !queue.isEmpty else { return }
         current = queue.removeFirst()
 
-        // auto dismiss
         dismissTask?.cancel()
         dismissTask = Task { [weak self] in
             guard let self else { return }
@@ -96,14 +95,13 @@ public struct SnackbarHostView: View {
                         .font(.subheadline.weight(.semibold))
                         .lineLimit(2)
                 }
-                .padding(.horizontal, 16)
-                .padding(.vertical, 12)
-                .frame(maxWidth: .infinity)
+                .padding(.horizontal, 8)
+                .padding(.vertical, 8)
                 .background(item.style.bg)
                 .foregroundStyle(item.style.fg)
                 .clipShape(Capsule())
                 .padding(.horizontal, 20)
-                .padding(.bottom, 20)
+                .padding(.bottom, 82)
                 .transition(.move(edge: .bottom).combined(with: .opacity))
                 .onTapGesture { manager.dismiss() }
                 .accessibilityLabel(item.message)
