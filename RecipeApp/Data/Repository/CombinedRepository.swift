@@ -16,7 +16,7 @@ final class CombinedRepository: RecipeRepository {
     }
 
     private let local = LocalDataSource()
-    private var currentSource: Source = .local
+    public var currentSource: Source = .local
 
     func setSource(_ source: Source) { currentSource = source }
 

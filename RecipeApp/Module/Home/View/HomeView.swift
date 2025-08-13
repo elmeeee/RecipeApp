@@ -12,7 +12,7 @@ import UtilityKit
 struct HomeView: View {
     @EnvironmentObject var snackbar: SnackbarManager
     @StateObject var vm: HomeViewModel
-
+    
     var body: some View {
         NavigationStack {
             Group {
@@ -28,28 +28,31 @@ struct HomeView: View {
                         HStack {
                             Toggle("Use Remote", isOn: $vm.useRemote)
                                 .onChange(of: vm.useRemote) { _, newVal in
-                                    if newVal { vm.setSourceRemote(vm.remoteURLText) } else { vm.setSourceLocal() }
-                                    vm.load()
-                                }
-                            if vm.useRemote {
-                                TextField("Remote JSON URL", text: $vm.remoteURLText)
-                                    .textInputAutocapitalization(.never)
-                                    .autocorrectionDisabled()
-                                    .textFieldStyle(.roundedBorder)
-                                    .onSubmit {
+                                    if newVal {
                                         vm.setSourceRemote(vm.remoteURLText)
-                                        vm.load()
+                                        Task {
+                                            let success = await vm.load()
+                                            snackbar.show(success ? "Loaded recipes from remote" : "Failed to load remote recipes, using local data",
+                                                          style: success ? .success : .error)
+                                        }
+                                    } else {
+                                        vm.setSourceLocal()
+                                        Task {
+                                            await vm.load()
+                                            snackbar.show("Loaded recipes from local data", style: .info)
+                                        }
                                     }
-                            }
-                        }.padding(.horizontal)
-
+                                }
+                        }
+                        .padding(.horizontal)
+                        
                         ScrollView(.horizontal, showsIndicators: false) {
                             TagChipsView(tags: vm.uniqueTags, selected: $vm.selectedTags)
                                 .onChange(of: vm.selectedTags) {
                                     vm.applyFilters()}
                                 .padding(.horizontal)
                         }
-
+                        
                         Picker("Sort", selection: $vm.sort) {
                             ForEach(SortOption.allCases, id: \.self) {
                                 Text($0.rawValue).tag($0)
@@ -58,7 +61,7 @@ struct HomeView: View {
                         .pickerStyle(.segmented)
                         .padding(.horizontal)
                         .onChange(of: vm.sort) { _, _ in vm.applyFilters() }
-
+                        
                         List(vm.filtered) { r in
                             NavigationLink {
                                 DetailView(vm: DetailViewModel(recipe: r))
@@ -91,7 +94,7 @@ struct HomeView: View {
             .navigationTitle("RecipeBuddy")
             .searchable(text: $vm.searchText, placement: .navigationBarDrawer, prompt: "Search title or ingredient")
             .onChange(of: vm.searchText) { _, _ in vm.onSearchTextChanged() }
-            .task { vm.setSourceLocal(); vm.load() }
+            .task { vm.setSourceLocal(); await vm.load() }
         }
     }
 }

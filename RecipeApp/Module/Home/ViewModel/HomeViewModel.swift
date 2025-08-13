@@ -19,7 +19,7 @@ final class HomeViewModel: ObservableObject {
     @Published var selectedTags: Set<String> = []
     @Published var uniqueTags: [String] = []
     @Published var useRemote = false
-    @Published var remoteURLText = ""
+    @Published var remoteURLText = "https://raw.githubusercontent.com/elmeeee/RecipeApp/refs/heads/main/RecipeApp/Data/recipes.json?token=GHSAT0AAAAAADC6WWIGOJM3HGXRZL25O2WO2E4WOVQ"
 
     private let repo: CombinedRepository
     private let favorites: FavoritesStore
@@ -32,18 +32,24 @@ final class HomeViewModel: ObservableObject {
     func setSourceLocal() { repo.setSource(.local) }
     func setSourceRemote(_ url: String) { repo.setSource(.remote(url)) }
 
-    func load() {
-        Task {
-            state = .loading
-            do {
-                let items = try await repo.fetchRecipes()
-                self.all = items
-                self.uniqueTags = Array(Set(items.flatMap { $0.tags })).sorted()
-                applyFilters()
-                state = filtered.isEmpty ? .empty : .loaded
-            } catch {
-                state = .error((error as? LocalizedError)?.errorDescription ?? "Unknown error")
+    @discardableResult
+    func load() async -> Bool {
+        state = .loading
+        do {
+            let items = try await repo.fetchRecipes()
+            self.all = items
+            self.uniqueTags = Array(Set(items.flatMap { $0.tags })).sorted()
+            applyFilters()
+            state = filtered.isEmpty ? .empty : .loaded
+            return true
+        } catch {
+            state = .error((error as? LocalizedError)?.errorDescription ?? "Unknown error")
+            if case .remote(_) = repo.currentSource {
+                setSourceLocal()
+                try? await Task.sleep(nanoseconds: 500_000_000)
+                _ = await load()
             }
+            return false
         }
     }
 
