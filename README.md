@@ -9,7 +9,7 @@ Built using **SwiftUI + MVVM** with a **Repository pattern**, async/await networ
 
 1. **Clone the repository**:
    ```bash
-   git clone <your-repo-url>.git
+   git clone https://github.com/elmeeee/RecipeApp
    cd RecipeBuddy
    ```
 
@@ -86,3 +86,10 @@ View  <->  ViewModel  <->  Repository  <->  Local / Remote Data Sources
 - Unit tests for ViewModels and Repository.
 - Swipe actions for quickly favoriting or adding to meal plan.
 - More advanced filtering (e.g., multiple tags AND search).
+
+## ScreenShoot
+<img src="https://github.com/elmeeee/RecipeApp/blob/main/RecipeApp/Data/Result.png" width="800" />
+
+## Video Demo
+[Watch the demo here](https://drive.google.com/file/d/1WKcYbAllqkTxC-fwoWFj2rhvwhgAJH8a/view?usp=sharing)
+
